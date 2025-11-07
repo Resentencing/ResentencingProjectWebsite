@@ -1,3 +1,7 @@
 [build]
-  publish = "frontend"
+  command = "npm run build"
+  publish = "frontend/dist"
   functions = "functions"
+
+[build.environment]
+  NODE_VERSION = "20"
