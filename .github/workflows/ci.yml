@@ -40,6 +40,7 @@ jobs:
       - name: Deploy Netlify preview for this PR
         id: deploy_preview
         env:
+        # Secrets are set in GitHub; Token created in Netlify through settings; Site ID found in site's project configuration
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         run: |
