@@ -1,17 +1,76 @@
 name: CI
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
+    branches: [ main ]
+  push:
     branches: [ main ]
 
 jobs:
-  build-test:
+  # (1) For pull requests: build, deploy a Netlify preview, test that preview
+  preview_and_test_pr:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     env:
-      NODE_VERSION: '20'
+      NODE_VERSION: '20.12.2'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build frontend with Vite
+        run: npm run build
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Install Netlify CLI (CI only)
+        run: npm install -g netlify-cli@23.11.0
+
+      - name: Deploy Netlify preview for this PR
+        id: deploy_preview
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          # Deploy the built frontend/dist as a preview
+          netlify deploy \
+            --auth="$NETLIFY_AUTH_TOKEN" \
+            --site="$NETLIFY_SITE_ID" \
+            --dir="frontend/dist" \
+            --alias="pr-${{ github.event.pull_request.number }}" \
+            --message="GitHub PR #${{ github.event.pull_request.number }} preview" \
+            --json > deploy.json
+
+          PREVIEW_URL=$(jq -r '.deploy_url' deploy.json)
+          echo "PREVIEW_URL=$PREVIEW_URL" >> "$GITHUB_ENV"
+          echo "Preview URL: $PREVIEW_URL"
+
+      - name: Run Playwright E2E tests against preview
+        run: npm run test:e2e
+        env:
+          BASE_URL: ${{ env.PREVIEW_URL }}
+
+      - name: Run Lighthouse CI against preview
+        run: npx lhci autorun --config=lighthouserc.json --collect.url=${{ env.PREVIEW_URL }}/
+
+  # (2) For main - health check against prod
+  main_prod_healthcheck:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    env:
+      NODE_VERSION: '20.12.2'
       BASE_URL: 'https://resentencing.netlify.app'
 
     steps:
@@ -33,8 +92,8 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Run Playwright E2E tests
+      - name: Run Playwright E2E tests against production
         run: npm run test:e2e
 
-      - name: Run Lighthouse CI
+      - name: Run Lighthouse CI against production
         run: npx lhci autorun --config=lighthouserc.json --collect.url=$BASE_URL/
