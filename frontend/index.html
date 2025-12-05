@@ -1,28 +1,37 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full">
 <head>
+  <!-- Basic document metadata and responsive setup -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ResentencingAI - Case Analysis Platform</title>
+
+  <!-- Page title and favicon for browser tab -->
+  <title>ResentencingAI</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png">
 </head>
 
-<body class="h-full bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 text-ink-800 selection:bg-brand-200/60">
-  <!-- Skip link -->
+<body class="h-full bg-gradient-to-b from-slate-50 via-white to-slate-100 text-slate-800 selection:bg-sky-200/60 relative">
+  <!-- Atmospheric visual overlays (fog, snow) controlled via CSS/JS -->
+  <div id="fog-overlay"></div>
+  <div id="snow-container"></div>
+
+  <!-- Accessibility: skip link for keyboard users to jump to main content -->
   <a href="#main" class="sr-only focus:not-sr-only skip-link">
     Skip to main content
   </a>
 
-  <!-- Header -->
-  <header class="sticky top-0 z-40 shadow-sm">
+  <!-- Site header with brand, primary navigation, and mobile menu toggle -->
+  <header class="sticky top-0 z-40 shadow-md">
+    <!-- Gradient background wrapper for header -->
     <div class="header-gradient">
       <div class="mx-auto max-w-7xl px-4">
         <div class="flex h-16 items-center justify-between">
-          <!-- Brand -->
+          <!-- Brand / logo link -->
           <a href="/" class="brand-logo text-white font-semibold tracking-wide text-lg">
             ResentencingAI
           </a>
 
-          <!-- Desktop nav -->
+          <!-- Primary navigation (desktop view) -->
           <nav class="nav-primary hidden md:flex items-center gap-6" aria-label="Primary">
             <a class="nav-link rounded px-1" href="/">Home</a>
             <a class="nav-link rounded px-1" href="#">Case Finder</a>
@@ -31,9 +40,9 @@
             <a class="nav-link rounded px-1" href="#">Methodology</a>
           </nav>
 
-          <!-- Mobile menu button -->
+          <!-- Mobile menu toggle button (hamburger icon) -->
           <button id="mobile-menu-btn"
-                  class="md:hidden text-slate-100 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 rounded p-1"
+                  class="md:hidden text-slate-100 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 rounded p-1"
                   aria-label="Toggle menu" aria-controls="mobile-menu" aria-expanded="false">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -44,52 +53,63 @@
       </div>
     </div>
 
-    <!-- Mobile menu -->
+    <!-- Mobile navigation menu (shown when toggled) -->
     <div id="mobile-menu"
-         class="hidden md:hidden bg-white/90 backdrop-blur border-b border-slate-200"
+         class="hidden md:hidden bg-white/95 backdrop-blur border-b border-slate-200"
          role="navigation" aria-hidden="true">
       <div class="mx-auto max-w-7xl px-4 py-3 grid gap-2 text-lg">
-        <a class="py-2 text-ink-800 hover:text-ink-900 border-b border-slate-200" href="/">Home</a>
-        <a class="py-2 text-ink-800 hover:text-ink-900 border-b border-slate-200" href="#">Case Finder</a>
-        <a class="py-2 text-ink-800 hover:text-ink-900 border-b border-slate-200" href="#">Archives</a>
-        <a class="py-2 text-ink-800 hover:text-ink-900 border-b border-slate-200" href="#">Dashboard</a>
-        <a class="py-2 text-ink-800 hover:text-ink-900" href="#">Methodology</a>
+        <a class="py-2 text-slate-800 hover:text-sky-700 border-b border-slate-200" href="/">Home</a>
+        <a class="py-2 text-slate-800 hover:text-sky-700 border-b border-slate-200" href="#">Case Finder</a>
+        <a class="py-2 text-slate-800 hover:text-sky-700 border-b border-slate-200" href="#">Archives</a>
+        <a class="py-2 text-slate-800 hover:text-sky-700 border-b border-slate-200" href="#">Dashboard</a>
+        <a class="py-2 text-slate-800 hover:text-sky-700" href="#">Methodology</a>
       </div>
     </div>
   </header>
 
-  <!-- Main -->
-  <main id="main" class="mx-auto max-w-7xl px-4 py-10">
-    <section class="mb-10 text-center">
-      <h1 class="text-4xl font-bold text-ink-900 tracking-tight">
-        ResentencingAI Case Analysis Platform
-      </h1>
-      <p class="mt-3 text-lg text-ink-700/80 max-w-3xl mx-auto">
-        Advanced analytics for resentencing eligibility assessment and case law analysis.
-      </p>
-    </section>
+  <!-- Main page content -->
+  <main id="main">
+    <!-- Hero section with background image and overlay -->
+    <section class="hero-section bg-cover bg-center relative overflow-hidden">
+      <!-- Dark/gradient overlay on hero background image -->
+      <div class="hero-overlay"></div>
 
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="rounded-xl border border-slate-200 bg-white/80 backdrop-blur p-6 shadow-sm text-center">
-        <h2 class="text-xl font-semibold text-ink-900 mb-2">Coming Soon</h2>
-        <p class="text-ink-700/80">Feature content will be displayed here.</p>
-      </div>
-      <div class="rounded-xl border border-slate-200 bg-white/80 backdrop-blur p-6 shadow-sm text-center">
-        <h2 class="text-xl font-semibold text-ink-900 mb-2">Coming Soon</h2>
-        <p class="text-ink-700/80">Feature content will be displayed here.</p>
-      </div>
-      <div class="rounded-xl border border-slate-200 bg-white/80 backdrop-blur p-6 shadow-sm text-center">
-        <h2 class="text-xl font-semibold text-ink-900 mb-2">Coming Soon</h2>
-        <p class="text-ink-700/80">Feature content will be displayed here.</p>
+      <!-- Hero content container -->
+      <div class="mx-auto max-w-7xl px-4 py-10 relative z-10 hero-content">
+        <!-- Hero title and subtitle -->
+        <section class="mb-10 text-center">
+          <h1 class="text-4xl font-bold tracking-tight bg-gradient-to-r from-sky-600 via-cyan-500 to-sky-600 bg-clip-text text-transparent pb-1">
+            ResentencingAI Case Analysis Platform
+          </h1>
+          <p class="mt-3 text-lg text-white max-w-3xl mx-auto font-medium">
+            Advanced analytics for resentencing eligibility assessment and case law analysis.
+          </p>
+        </section>
+
+        <!-- Placeholder feature cards (three-column layout) -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="rounded-xl border border-white/60 bg-white/60 backdrop-blur p-6 shadow-sm text-center">
+            <h2 class="text-xl font-semibold text-slate-900 mb-2">Coming Soon</h2>
+            <p class="text-slate-700/80">Feature content will be displayed here.</p>
+          </div>
+          <div class="rounded-xl border border-white/60 bg-white/60 backdrop-blur p-6 shadow-sm text-center">
+            <h2 class="text-xl font-semibold text-slate-900 mb-2">Coming Soon</h2>
+            <p class="text-slate-700/80">Feature content will be displayed here.</p>
+          </div>
+          <div class="rounded-xl border border-white/60 bg-white/60 backdrop-blur p-6 shadow-sm text-center">
+            <h2 class="text-xl font-semibold text-slate-900 mb-2">Coming Soon</h2>
+            <p class="text-slate-700/80">Feature content will be displayed here.</p>
+          </div>
+        </section>
       </div>
     </section>
   </main>
 
-  <!-- Chat widget -->
+  <!-- Floating chat launcher and compact chat panel (bottom-right) -->
   <div class="fixed bottom-6 right-6 z-50">
-    <!-- Toggle button -->
+    <!-- Circular chat toggle button -->
     <button id="chat-toggle"
-            class="w-14 h-14 rounded-full shadow-lg bg-brand-700 hover:bg-brand-600 text-white flex items-center justify-center focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-300"
+            class="w-14 h-14 rounded-full shadow-lg bg-sky-600 hover:bg-sky-500 text-white flex items-center justify-center focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-300"
             aria-label="Open chat" aria-controls="chat-panel" aria-expanded="false">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -97,22 +117,25 @@
       </svg>
     </button>
 
-    <!-- Docked chat panel -->
+    <!-- Compact chat panel (sidebar-style chat window) -->
     <section id="chat-panel" role="dialog" aria-labelledby="chat-panel-title" aria-modal="false" aria-hidden="true"
              class="hidden absolute bottom-20 right-0 w-80 h-[440px] rounded-xl border border-slate-200 bg-white shadow-xl flex flex-col">
+      <!-- Chat panel header with title and controls -->
       <header class="flex items-center justify-between px-4 py-3 border-b border-slate-200 bg-slate-50 rounded-t-xl">
-        <h3 id="chat-panel-title" class="font-semibold text-ink-900">AI Assistant</h3>
+        <h3 id="chat-panel-title" class="font-semibold text-slate-900">AI Assistant</h3>
         <div class="flex items-center gap-2">
+          <!-- Expand to full-screen chat button -->
           <button id="chat-expand"
-                  class="text-ink-700/80 hover:text-ink-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 rounded p-1"
+                  class="text-slate-700/80 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 rounded p-1"
                   aria-label="Open full screen chat">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M4 8V4h4M4 4l5 5m11-1V4h-4m4 0l-5 5M4 16v4h4m-4 0l5-5m11 5v-4h-4m4 0l-5 5"/>
             </svg>
           </button>
+          <!-- Close compact chat panel -->
           <button id="chat-close"
-                  class="text-ink-700/80 hover:text-ink-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 rounded p-1"
+                  class="text-slate-700/80 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 rounded p-1"
                   aria-label="Close chat">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -121,19 +144,21 @@
         </div>
       </header>
 
+      <!-- Scrollable chat messages area (compact) -->
       <div id="chat-messages"
            class="flex-1 p-4 overflow-y-auto chat-messages flex flex-col items-center"
            aria-live="polite">
-        <div class="text-sm text-ink-700/80 mb-3 text-center">Welcome! How can I help with your resentencing research today?</div>
+        <div class="text-sm text-slate-700/80 mb-3 w-full text-left">Welcome! How can I help with your resentencing research today?</div>
       </div>
 
+      <!-- Chat input form (compact) -->
       <footer class="p-3 border-t border-slate-200">
         <form id="chat-form" class="flex items-center gap-2">
           <label for="chat-input" class="sr-only">Message</label>
           <textarea id="chat-input" rows="2" placeholder="Type your message…"
-                    class="flex-1 text-sm rounded-lg border border-slate-300 px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-brand-400 resize-none min-h-[44px]"></textarea>
+                    class="flex-1 text-sm rounded-lg border border-slate-300 px-3 py-2 text-left focus:outline-none focus:ring-2 focus:ring-sky-400 resize-none min-h-[44px]"></textarea>
           <button id="chat-send"
-                  class="shrink-0 h-[44px] w-[44px] rounded-lg bg-brand-700 hover:bg-brand-600 text-white flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
+                  class="shrink-0 h-[44px] w-[44px] rounded-lg bg-sky-600 hover:bg-sky-500 text-white flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
                   aria-label="Send message" type="submit">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -145,15 +170,17 @@
     </section>
   </div>
 
-  <!-- Fullscreen modal -->
+  <!-- Full-screen chat modal overlay -->
   <div id="chat-modal" role="dialog" aria-labelledby="chat-modal-title" aria-modal="true" aria-hidden="true"
-       class="hidden fixed inset-0 z-40 bg-black/50 p-4">
+       class="hidden fixed inset-0 z-40 bg-slate-900/50 p-4">
     <div class="mx-auto flex h-full max-w-3xl items-center justify-center">
+      <!-- Full-screen chat container -->
       <div class="w-full h-[80vh] rounded-xl bg-white shadow-2xl flex flex-col">
+        <!-- Full-screen chat header with title and close button -->
         <header class="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50 rounded-t-xl">
-          <h3 id="chat-modal-title" class="text-xl font-semibold text-ink-900">AI Assistant</h3>
+          <h3 id="chat-modal-title" class="text-xl font-semibold text-slate-900">AI Assistant</h3>
           <button id="chat-modal-close"
-                  class="text-ink-700/80 hover:text-ink-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 rounded p-1"
+                  class="text-slate-700/80 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 rounded p-1"
                   aria-label="Close full screen chat">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -161,19 +188,21 @@
           </button>
         </header>
 
+        <!-- Scrollable chat messages area (full-screen modal) -->
         <div id="chat-modal-messages"
              class="flex-1 p-6 overflow-y-auto chat-messages flex flex-col items-center"
              aria-live="polite">
-          <div class="text-sm text-ink-700/80 mb-3 text-center">Welcome! How can I help with your resentencing research today?</div>
+          <div class="text-sm text-slate-700/80 mb-3 w-full text-left">Welcome! How can I help with your resentencing research today?</div>
         </div>
 
+        <!-- Chat input form (full-screen modal) -->
         <footer class="p-4 border-t border-slate-200">
           <form id="chat-modal-form" class="flex items-center gap-2">
             <label for="chat-modal-input" class="sr-only">Message</label>
             <textarea id="chat-modal-input" rows="3" placeholder="Type your message…"
-                      class="flex-1 text-sm rounded-lg border border-slate-300 px-4 py-3 text-center focus:outline-none focus:ring-2 focus:ring-brand-400 resize-none min-h-[48px]"></textarea>
+                      class="flex-1 text-sm rounded-lg border border-slate-300 px-4 py-3 text-left focus:outline-none focus:ring-2 focus:ring-sky-400 resize-none min-h-[48px]"></textarea>
             <button id="chat-modal-send"
-                    class="shrink-0 h-[48px] w-[48px] rounded-lg bg-brand-700 hover:bg-brand-600 text-white flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
+                    class="shrink-0 h-[48px] w-[48px] rounded-lg bg-sky-600 hover:bg-sky-500 text-white flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
                     aria-label="Send message" type="submit">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -185,8 +214,9 @@
       </div>
     </div>
   </div>
-
-  <!-- Scripts -->
+  
+  <!-- TESTING INSTRUCTIONS: For testing w/o push goto main directory, 
+  run "npm install" then "npm run dev" goto http://localhost:XXXX/ -->
   <script type="module" src="/src/main.js"></script>
   
 </body>
