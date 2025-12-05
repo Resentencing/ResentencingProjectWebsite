@@ -206,7 +206,7 @@
   - Full-height hero with background image and overlay.
 */
 .hero-section {
-  background: url('/assets/big_hero_background.png') center/cover no-repeat;
+  background: url('/assets/big_hero_background.webp') center/cover no-repeat;
   height: 100vh;
   min-height: 800px;
   position: relative;
