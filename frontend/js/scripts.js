@@ -1,46 +1,3 @@
-// Winter Theme Logic: fog fade-out on load + initial parallax update
-window.addEventListener('load', () => {
-  // Clear the fog overlay once the page has finished loading
-  const fog = document.getElementById('fog-overlay');
-  if (fog) {
-    fog.style.opacity = '0';
-    // Remove from DOM after transition to save resources
-    setTimeout(() => {
-      fog.style.display = 'none';
-    }, 2500);
-  }
-  
-  // Ensure hero background position is correct on initial load
-  parallaxScroll();
-});
-
-// Snow Animation Logic: create individual snowflakes and drop them down the screen
-function createSnowflake() {
-  const snowContainer = document.getElementById('snow-container');
-  if (!snowContainer) return;
-
-  const flake = document.createElement('div');
-  flake.classList.add('snowflake');
-  
-  // Randomize size, position, opacity, and fall speed for a natural effect
-  const size = Math.random() * 5 + 2 + 'px';
-  flake.style.width = size;
-  flake.style.height = size;
-  flake.style.left = Math.random() * 100 + 'vw';
-  flake.style.opacity = Math.random() * 0.7 + 0.3;
-  flake.style.animationDuration = Math.random() * 3 + 2 + 's';
-  
-  snowContainer.appendChild(flake);
-
-  // Remove snowflake after it finishes falling to avoid DOM bloat
-  setTimeout(() => {
-    flake.remove();
-  }, 5000);
-}
-
-// Generate new snowflakes continuously at a fixed interval
-setInterval(createSnowflake, 500);
-
 /* Mobile Menu Toggle
    - Controls the header navigation visibility on small screens.
 */
@@ -242,6 +199,17 @@ async function handleFormSubmit(e, inputEl, msgsEl) {
   }
 }
 
+/* Parallax Hero Background */
+function parallaxScroll() {
+  const hero = document.querySelector('.hero-section');
+  if (!hero) return;
+  const offset = window.pageYOffset || document.documentElement.scrollTop || 0;
+  hero.style.backgroundPositionY = `${offset * 0.5}px`;
+}
+
+window.addEventListener('scroll', parallaxScroll);
+window.addEventListener('load', parallaxScroll); // optional initial position sync
+
 /* Wire Up Forms
    - Attach submit handlers to both chat forms.
 */
@@ -260,15 +228,3 @@ function enterToSend(e, formEl) {
 
 chatInput?.addEventListener('keydown', (e) => enterToSend(e, chatForm));
 chatModalInput?.addEventListener('keydown', (e) => enterToSend(e, chatModalForm));
-
-/* Parallax Hero Background
-   - Adjust hero background position on scroll for a parallax effect.
-*/
-function parallaxScroll() {
-  const hero = document.querySelector('.hero-section');
-  if (!hero) return;
-  const offset = window.pageYOffset || document.documentElement.scrollTop || 0;
-  hero.style.backgroundPositionY = `${offset * 0.5}px`;
-}
-
-window.addEventListener('scroll', parallaxScroll);
