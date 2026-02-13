@@ -178,3 +178,9 @@
     min-height: 640px;
   }
 }
+
+#chat-toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}

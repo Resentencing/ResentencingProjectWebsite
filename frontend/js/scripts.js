@@ -32,13 +32,29 @@ const chatModalInput = document.getElementById('chat-modal-input');
 const chatModalMsgs = document.getElementById('chat-modal-messages');
 const chatModalForm = document.getElementById('chat-modal-form');
 
+// Track which chat UI was last active so we can sync messages between views
+let lastActiveChat = 'docked'; // 'docked' | 'modal'
+
+function syncChatMessages(fromEl, toEl) {
+  if (!fromEl || !toEl) return;
+  // Copy the rendered messages so both views match
+  toEl.innerHTML = fromEl.innerHTML;
+  toEl.scrollTop = toEl.scrollHeight;
+}
+
 /* Chat UI Functions
    - Helper functions to open/close docked and modal chat variants.
 */
 function openDockedChat() {
+  // If we were last chatting in the modal, sync modal -> docked
+  if (lastActiveChat === 'modal') {
+    syncChatMessages(chatModalMsgs, chatMsgs);
+  }
+
   chatPanel.classList.remove('hidden');
   chatPanel.setAttribute('aria-hidden', 'false');
   chatToggle.setAttribute('aria-expanded', 'true');
+  lastActiveChat = 'docked';
   setTimeout(() => chatInput?.focus(), 0);
 }
 
@@ -50,14 +66,33 @@ function closeDockedChat() {
 }
 
 function openModalChat() {
+  // If we were last chatting in the docked panel, sync docked -> modal
+  if (lastActiveChat === 'docked') {
+    syncChatMessages(chatMsgs, chatModalMsgs);
+  }
+
   chatModal.classList.remove('hidden');
   chatModal.setAttribute('aria-hidden', 'false');
+  
+  // Disable small chat button when large window is open
+  chatToggle.disabled = true;
+  chatToggle.setAttribute('aria-disabled', 'true');
+  
+  lastActiveChat = 'modal';
   setTimeout(() => chatModalInput?.focus(), 0);
 }
 
 function closeModalChat() {
+  // When leaving modal, preserve modal state back into docked
+  syncChatMessages(chatModalMsgs, chatMsgs);
+
   chatModal.classList.add('hidden');
   chatModal.setAttribute('aria-hidden', 'true');
+  
+  chatToggle.disabled = false;
+  chatToggle.setAttribute('aria-disabled', 'false');
+  
+  lastActiveChat = 'docked';
   chatToggle.focus();
 }
 
@@ -65,6 +100,8 @@ function closeModalChat() {
    - Wire up buttons to toggle between docked and full-screen chat.
 */
 chatToggle?.addEventListener('click', () => {
+	if (chatToggle.disabled) return; // do nothing if window is open
+	
   // On small screens, open modal; otherwise toggle docked panel
   if (window.matchMedia('(max-width: 640px)').matches) {
     openModalChat();
@@ -79,6 +116,8 @@ chatToggle?.addEventListener('click', () => {
 
 chatClose?.addEventListener('click', closeDockedChat);
 chatExpand?.addEventListener('click', () => {
+  // Copy docked -> modal right before switching
+  syncChatMessages(chatMsgs, chatModalMsgs);
   closeDockedChat();
   openModalChat();
 });
