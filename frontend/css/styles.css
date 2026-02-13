@@ -4,49 +4,6 @@
 @tailwind utilities;
 
 /*
-  Winter Theme Animations: Fog and Snow
-  - Fog overlay fades away on load.
-  - Snow container holds dynamically generated snowflakes.
-*/
-#fog-overlay {
-  position: fixed;
-  inset: 0;
-  background: linear-gradient(to bottom, #ffffff, rgba(255,255,255,0.7));
-  z-index: 9999;
-  transition: opacity 2.5s ease-out;
-  pointer-events: none;
-  opacity: 1;
-}
-
-#snow-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 5;
-  overflow: hidden;
-}
-
-/* Base styling for each snowflake created via JavaScript */
-.snowflake {
-  position: absolute;
-  top: -10px;
-  background-color: white;
-  border-radius: 50%;
-  opacity: 0.8;
-  animation: fall linear forwards;
-}
-
-/* Vertical falling animation for snowflakes */
-@keyframes fall {
-  to {
-    transform: translateY(105vh);
-  }
-}
-
-/*
   Custom Fade-In Animation
   - Used for hero content and dialogs to softly animate into view.
 */
@@ -80,7 +37,7 @@
 
 .chat-messages::-webkit-scrollbar-thumb {
   border-radius: 3px;
-  background: rgba(148, 163, 184, 0.4); /* Cool slate scrollbar */
+  background: rgba(148, 163, 184, 0.4);
 }
 
 /*
@@ -88,14 +45,12 @@
   - Gradient header bar, brand logo spacing, and navigation styling.
 */
 .header-gradient {
-  /* Icy Winter Gradient across the header */
-  background: linear-gradient(to right, #0c4a6e, #0284c7, #0c4a6e);
+  background: linear-gradient(to right, #1e293b, #334155, #1e293b);
 }
 
-/* Brand logo base styles + subtle glow */
+/* Brand logo base styles */
 .brand-logo {
   padding-left: 0.75rem;
-  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.3);
 }
 
 /* Increase logo left padding on medium screens */
@@ -136,8 +91,7 @@
 }
 
 .nav-link:hover {
-  color: #e0f2fe; /* Ice blue on hover */
-  text-shadow: 0 0 5px rgba(255,255,255,0.6);
+  color: #f8fafc;
 }
 
 .nav-link:focus-visible {
@@ -202,8 +156,8 @@
 }
 
 /*
-  Hero Background & Parallax
-  - Full-height hero with background image and overlay.
+  Hero Background
+  - Full-height hero with background image.
 */
 .hero-section {
   background: url('/assets/big_hero_background.webp') center/cover no-repeat;
@@ -211,20 +165,6 @@
   min-height: 800px;
   position: relative;
   overflow: hidden;
-}
-
-/* Gradient overlay to darken top and fade into lighter bottom */
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  /* Cool winter overlay (Blue/Slate) */
-  background: linear-gradient(
-    to bottom,
-    rgba(15, 23, 42, 0.65),
-    rgba(255, 255, 255, 0.2),
-    rgba(241, 245, 249, 1)
-  );
-  pointer-events: none;
 }
 
 /* Fade in hero content on first load */
