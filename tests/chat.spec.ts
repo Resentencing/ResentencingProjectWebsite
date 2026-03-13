@@ -96,7 +96,7 @@ test.describe('ResentencingAI frontend', () => {
     await clickOutsideModalCard('below');
   });
 
-  test('desktop expanded modal ignores backdrop clicks', async ({ page }) => {
+  test('desktop expanded modal ignores backdrop clicks and closes from the launcher', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto('/');
 
@@ -125,6 +125,28 @@ test.describe('ResentencingAI frontend', () => {
 
     await page.mouse.click(x, y);
     await expect(chatModal).toBeVisible();
+
+    await chatToggle.click();
+    await expect(chatModal).toBeHidden();
+    await expect(chatPanel).toBeHidden();
+  });
+
+  test('hero parallax is disabled on mobile and stays active on desktop', async ({ page }) => {
+    const hero = page.locator('.hero-section');
+
+    await page.setViewportSize({ width: 390, height: 600 });
+    await page.goto('/');
+    await page.evaluate(() => window.scrollTo(0, 200));
+    await expect
+      .poll(async () => hero.evaluate((el) => el.style.backgroundPositionY || ''))
+      .toBe('');
+
+    await page.setViewportSize({ width: 1280, height: 600 });
+    await page.goto('/');
+    await page.evaluate(() => window.scrollTo(0, 200));
+    await expect
+      .poll(async () => hero.evaluate((el) => el.style.backgroundPositionY))
+      .toBe('100px');
   });
 
 	test('ai-proxy contract test returns expected JSON shape', async ({ request, baseURL }) => {
