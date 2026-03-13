@@ -1,16 +1,66 @@
-/* Mobile Menu Toggle
+﻿/* Mobile Menu Toggle
    - Controls the header navigation visibility on small screens.
 */
 const mobileBtn = document.getElementById('mobile-menu-btn');
 const mobileMenu = document.getElementById('mobile-menu');
+const mobileMenuLinks = mobileMenu ? [...mobileMenu.querySelectorAll('a')] : [];
+const mobileLayoutQuery = window.matchMedia('(max-width: 767px)');
 
-mobileBtn?.addEventListener('click', () => {
-  const open = mobileBtn.getAttribute('aria-expanded') === 'true';
-  mobileBtn.setAttribute('aria-expanded', String(!open));
-  mobileMenu.classList.toggle('hidden');
-  mobileMenu.setAttribute('aria-hidden', String(open));
-  // Disable page scroll when menu is open
-  document.body.style.overflow = open ? 'auto' : 'hidden';
+function isMobileLayout() {
+  return mobileLayoutQuery.matches;
+}
+
+function isMobileMenuOpen() {
+  return Boolean(mobileMenu) && !mobileMenu.classList.contains('hidden');
+}
+
+function syncBodyScrollLock() {
+  const modalOpen = chatModal?.getAttribute('aria-hidden') === 'false';
+  document.body.style.overflow = isMobileMenuOpen() || modalOpen ? 'hidden' : '';
+}
+
+function openMobileMenu() {
+  if (!mobileBtn || !mobileMenu) return;
+  mobileBtn.setAttribute('aria-expanded', 'true');
+  mobileMenu.classList.remove('hidden');
+  mobileMenu.setAttribute('aria-hidden', 'false');
+  syncBodyScrollLock();
+}
+
+function closeMobileMenu({ focusButton = false } = {}) {
+  if (!mobileBtn || !mobileMenu) return;
+  mobileBtn.setAttribute('aria-expanded', 'false');
+  mobileMenu.classList.add('hidden');
+  mobileMenu.setAttribute('aria-hidden', 'true');
+  syncBodyScrollLock();
+
+  if (focusButton) {
+    mobileBtn.focus();
+  }
+}
+
+function toggleMobileMenu() {
+  if (isMobileMenuOpen()) {
+    closeMobileMenu();
+  } else {
+    openMobileMenu();
+  }
+}
+
+mobileBtn?.addEventListener('click', toggleMobileMenu);
+mobileMenuLinks.forEach((link) => {
+  link.addEventListener('click', () => {
+    closeMobileMenu();
+  });
+});
+
+document.addEventListener('click', (event) => {
+  if (!isMobileMenuOpen() || !mobileMenu || !mobileBtn) return;
+
+  const target = event.target;
+  if (mobileMenu.contains(target) || mobileBtn.contains(target)) return;
+
+  closeMobileMenu();
 });
 
 /* Chat Widget Elements
@@ -35,6 +85,24 @@ const chatModalForm = document.getElementById('chat-modal-form');
 // Track which chat UI was last active so we can sync messages between views
 let lastActiveChat = 'docked'; // 'docked' | 'modal'
 
+function isDockedChatOpen() {
+  return chatPanel?.getAttribute('aria-hidden') === 'false';
+}
+
+function isModalChatOpen() {
+  return chatModal?.getAttribute('aria-hidden') === 'false';
+}
+
+function syncChatToggleA11y() {
+  if (!chatToggle) return;
+
+  const controlsId = isModalChatOpen() || isMobileLayout() ? 'chat-modal' : 'chat-panel';
+  const expanded = isDockedChatOpen() || isModalChatOpen();
+
+  chatToggle.setAttribute('aria-controls', controlsId);
+  chatToggle.setAttribute('aria-expanded', String(expanded));
+}
+
 function syncChatMessages(fromEl, toEl) {
   if (!fromEl || !toEl) return;
   // Copy the rendered messages so both views match
@@ -53,19 +121,26 @@ function openDockedChat() {
 
   chatPanel.classList.remove('hidden');
   chatPanel.setAttribute('aria-hidden', 'false');
-  chatToggle.setAttribute('aria-expanded', 'true');
   lastActiveChat = 'docked';
+  syncChatToggleA11y();
   setTimeout(() => chatInput?.focus(), 0);
 }
 
-function closeDockedChat() {
+function closeDockedChat({ focusLauncher = true } = {}) {
   chatPanel.classList.add('hidden');
   chatPanel.setAttribute('aria-hidden', 'true');
-  chatToggle.setAttribute('aria-expanded', 'false');
-  chatToggle.focus();
+  syncChatToggleA11y();
+
+  if (focusLauncher) {
+    chatToggle?.focus();
+  }
 }
 
 function openModalChat() {
+  if (isMobileMenuOpen()) {
+    closeMobileMenu();
+  }
+
   // If we were last chatting in the docked panel, sync docked -> modal
   if (lastActiveChat === 'docked') {
     syncChatMessages(chatMsgs, chatModalMsgs);
@@ -73,69 +148,88 @@ function openModalChat() {
 
   chatModal.classList.remove('hidden');
   chatModal.setAttribute('aria-hidden', 'false');
-  
+
   // Disable small chat button when large window is open
   chatToggle.disabled = true;
   chatToggle.setAttribute('aria-disabled', 'true');
-  
+
   lastActiveChat = 'modal';
+  syncBodyScrollLock();
+  syncChatToggleA11y();
   setTimeout(() => chatModalInput?.focus(), 0);
 }
 
-function closeModalChat() {
+function closeModalChat({ focusLauncher = true } = {}) {
   // When leaving modal, preserve modal state back into docked
   syncChatMessages(chatModalMsgs, chatMsgs);
 
   chatModal.classList.add('hidden');
   chatModal.setAttribute('aria-hidden', 'true');
-  
+
   chatToggle.disabled = false;
   chatToggle.setAttribute('aria-disabled', 'false');
-  
+
   lastActiveChat = 'docked';
-  chatToggle.focus();
+  syncBodyScrollLock();
+  syncChatToggleA11y();
+
+  if (focusLauncher) {
+    chatToggle.focus();
+  }
 }
 
 /* Chat Event Listeners
    - Wire up buttons to toggle between docked and full-screen chat.
 */
 chatToggle?.addEventListener('click', () => {
-	if (chatToggle.disabled) return; // do nothing if window is open
-	
-  // On small screens, open modal; otherwise toggle docked panel
-  if (window.matchMedia('(max-width: 640px)').matches) {
+  if (chatToggle.disabled) return; // do nothing if window is open
+
+  // On mobile/tablet layouts, open modal; otherwise toggle docked panel
+  if (isMobileLayout()) {
     openModalChat();
+  } else if (isDockedChatOpen()) {
+    closeDockedChat();
   } else {
-    if (chatPanel.getAttribute('aria-hidden') === 'true') {
-      openDockedChat();
-    } else {
-      closeDockedChat();
-    }
+    openDockedChat();
   }
 });
 
-chatClose?.addEventListener('click', closeDockedChat);
+chatClose?.addEventListener('click', () => closeDockedChat());
 chatExpand?.addEventListener('click', () => {
   // Copy docked -> modal right before switching
   syncChatMessages(chatMsgs, chatModalMsgs);
-  closeDockedChat();
+  closeDockedChat({ focusLauncher: false });
   openModalChat();
 });
-chatModalClose?.addEventListener('click', closeModalChat);
+chatModalClose?.addEventListener('click', () => closeModalChat());
+
+function handleResponsiveLayout() {
+  if (!isMobileLayout()) {
+    closeMobileMenu();
+  }
+
+  if (isMobileLayout() && isDockedChatOpen()) {
+    closeDockedChat({ focusLauncher: false });
+  }
+
+  syncChatToggleA11y();
+}
+
+window.addEventListener('resize', handleResponsiveLayout);
 
 /* Keyboard Navigation
    - Global Escape key handling to close chat and mobile menu.
 */
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    if (chatModal.getAttribute('aria-hidden') === 'false') {
+    if (isModalChatOpen()) {
       closeModalChat();
     }
-    if (chatPanel.getAttribute('aria-hidden') === 'false') {
+    if (isDockedChatOpen()) {
       closeDockedChat();
     }
-    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-      mobileBtn.click();
+    if (isMobileMenuOpen()) {
+      closeMobileMenu({ focusButton: true });
     }
   }
 });
@@ -155,9 +249,9 @@ function appendMsg(container, text, from = 'user') {
   return bubble;
 }
 
-// Add a temporary "typing…" bubble and return a function to remove it
+// Add a temporary typing bubble and return a function to remove it
 function appendTyping(container) {
-  const el = appendMsg(container, '…', 'bot');
+  const el = appendMsg(container, '...', 'bot');
   el.classList.add('typing');
   return () => {
     el.parentElement?.remove();
@@ -189,12 +283,12 @@ async function callAI(query, { timeoutMs = 30000 } = {}) {
   try {
     data = JSON.parse(text);
   } catch {}
-  
+
   if (!res.ok) {
     const msg = (data && (data.error || data.message)) || text || `HTTP ${res.status}`;
     throw new Error(msg);
   }
-  
+
   if (data && typeof data.response === 'string') {
     return data.response;
   }
@@ -247,7 +341,12 @@ function parallaxScroll() {
 }
 
 window.addEventListener('scroll', parallaxScroll);
-window.addEventListener('load', parallaxScroll); // optional initial position sync
+window.addEventListener('load', () => {
+  handleResponsiveLayout();
+  syncBodyScrollLock();
+  syncChatToggleA11y();
+  parallaxScroll();
+});
 
 /* Wire Up Forms
    - Attach submit handlers to both chat forms.
