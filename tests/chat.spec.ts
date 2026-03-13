@@ -48,12 +48,13 @@ test.describe('ResentencingAI frontend', () => {
     await expect(messagesContainer).not.toBeEmpty();
   });
 
-  test('mobile chat launcher toggles modal and overlay closes it', async ({ page }) => {
+  test('mobile chat launcher toggles modal and backdrop taps above and below close it', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
 
     const chatToggle = page.getByRole('button', { name: /open chat/i });
     const chatModal = page.locator('#chat-modal');
+    const chatModalCard = page.locator('#chat-modal > div > div');
     const chatModalInput = page.locator('#chat-modal-input');
 
     await chatToggle.click();
@@ -67,11 +68,63 @@ test.describe('ResentencingAI frontend', () => {
     await chatToggle.click();
     await expect(chatModal).toBeHidden();
 
+    const clickOutsideModalCard = async (position: 'above' | 'below') => {
+      await chatToggle.click();
+      await expect(chatModal).toBeVisible();
+
+      const modalCardBox = await chatModalCard.boundingBox();
+      expect(modalCardBox).not.toBeNull();
+
+      const viewport = page.viewportSize();
+      expect(viewport).not.toBeNull();
+
+      if (!modalCardBox || !viewport) {
+        throw new Error('Expected modal card bounds and viewport size for outside-click test');
+      }
+
+      const x = modalCardBox.x + modalCardBox.width / 2;
+      const y =
+        position === 'above'
+          ? Math.max(4, modalCardBox.y - 8)
+          : Math.min(viewport.height - 4, modalCardBox.y + modalCardBox.height + 8);
+
+      await page.mouse.click(x, y);
+      await expect(chatModal).toBeHidden();
+    };
+
+    await clickOutsideModalCard('above');
+    await clickOutsideModalCard('below');
+  });
+
+  test('desktop expanded modal ignores backdrop clicks', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/');
+
+    const chatToggle = page.getByRole('button', { name: /open chat/i });
+    const chatPanel = page.locator('#chat-panel');
+    const chatExpand = page.locator('#chat-expand');
+    const chatModal = page.locator('#chat-modal');
+    const chatModalCard = page.locator('#chat-modal > div > div');
+
     await chatToggle.click();
+    await expect(chatPanel).toBeVisible();
+
+    await chatExpand.click();
+    await expect(chatPanel).toBeHidden();
     await expect(chatModal).toBeVisible();
 
-    await chatModal.click({ position: { x: 5, y: 5 } });
-    await expect(chatModal).toBeHidden();
+    const modalCardBox = await chatModalCard.boundingBox();
+    expect(modalCardBox).not.toBeNull();
+
+    if (!modalCardBox) {
+      throw new Error('Expected modal card bounds for desktop backdrop test');
+    }
+
+    const x = Math.max(4, modalCardBox.x - 8);
+    const y = modalCardBox.y + modalCardBox.height / 2;
+
+    await page.mouse.click(x, y);
+    await expect(chatModal).toBeVisible();
   });
 
 	test('ai-proxy contract test returns expected JSON shape', async ({ request, baseURL }) => {

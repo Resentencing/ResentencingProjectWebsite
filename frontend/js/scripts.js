@@ -27,6 +27,7 @@ const chatForm = document.getElementById('chat-form');
 
 // Modal elements
 const chatModal = document.getElementById('chat-modal');
+const chatModalCard = chatModal?.querySelector(':scope > div > div');
 const chatModalClose = document.getElementById('chat-modal-close');
 const chatModalInput = document.getElementById('chat-modal-input');
 const chatModalMsgs = document.getElementById('chat-modal-messages');
@@ -34,6 +35,11 @@ const chatModalForm = document.getElementById('chat-modal-form');
 
 // Track which chat UI was last active so we can sync messages between views
 let lastActiveChat = 'docked'; // 'docked' | 'modal'
+const mobileChatViewport = window.matchMedia('(max-width: 640px)');
+
+function isMobileChatViewport() {
+  return mobileChatViewport.matches;
+}
 
 function syncChatMessages(fromEl, toEl) {
   if (!fromEl || !toEl) return;
@@ -96,7 +102,7 @@ function closeModalChat() {
 */
 chatToggle?.addEventListener('click', () => {
   // On small screens, open modal; otherwise toggle docked panel
-  if (window.matchMedia('(max-width: 640px)').matches) {
+  if (isMobileChatViewport()) {
     if (chatModal.getAttribute('aria-hidden') === 'true') {
       openModalChat();
     } else {
@@ -120,7 +126,11 @@ chatExpand?.addEventListener('click', () => {
 });
 chatModalClose?.addEventListener('click', closeModalChat);
 chatModal?.addEventListener('click', (e) => {
-  if (e.target === chatModal) {
+  if (!isMobileChatViewport() || !chatModalCard || !(e.target instanceof Node)) {
+    return;
+  }
+
+  if (!chatModalCard.contains(e.target)) {
     closeModalChat();
   }
 });
