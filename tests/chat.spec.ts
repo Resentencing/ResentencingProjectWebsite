@@ -48,6 +48,32 @@ test.describe('ResentencingAI frontend', () => {
     await expect(messagesContainer).not.toBeEmpty();
   });
 
+  test('mobile chat launcher toggles modal and overlay closes it', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+
+    const chatToggle = page.getByRole('button', { name: /open chat/i });
+    const chatModal = page.locator('#chat-modal');
+    const chatModalInput = page.locator('#chat-modal-input');
+
+    await chatToggle.click();
+    await expect(chatModal).toBeVisible();
+
+    const fontSize = await chatModalInput.evaluate((el) =>
+      Number.parseFloat(window.getComputedStyle(el).fontSize)
+    );
+    expect(fontSize).toBeGreaterThanOrEqual(16);
+
+    await chatToggle.click();
+    await expect(chatModal).toBeHidden();
+
+    await chatToggle.click();
+    await expect(chatModal).toBeVisible();
+
+    await chatModal.click({ position: { x: 5, y: 5 } });
+    await expect(chatModal).toBeHidden();
+  });
+
 	test('ai-proxy contract test returns expected JSON shape', async ({ request, baseURL }) => {
 	  if (!baseURL) {
 		throw new Error('BASE_URL is not set');
