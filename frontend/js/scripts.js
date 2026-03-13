@@ -73,10 +73,7 @@ function openModalChat() {
 
   chatModal.classList.remove('hidden');
   chatModal.setAttribute('aria-hidden', 'false');
-  
-  // Disable small chat button when large window is open
-  chatToggle.disabled = true;
-  chatToggle.setAttribute('aria-disabled', 'true');
+  chatToggle.setAttribute('aria-expanded', 'true');
   
   lastActiveChat = 'modal';
   setTimeout(() => chatModalInput?.focus(), 0);
@@ -88,9 +85,7 @@ function closeModalChat() {
 
   chatModal.classList.add('hidden');
   chatModal.setAttribute('aria-hidden', 'true');
-  
-  chatToggle.disabled = false;
-  chatToggle.setAttribute('aria-disabled', 'false');
+  chatToggle.setAttribute('aria-expanded', 'false');
   
   lastActiveChat = 'docked';
   chatToggle.focus();
@@ -100,11 +95,13 @@ function closeModalChat() {
    - Wire up buttons to toggle between docked and full-screen chat.
 */
 chatToggle?.addEventListener('click', () => {
-	if (chatToggle.disabled) return; // do nothing if window is open
-	
   // On small screens, open modal; otherwise toggle docked panel
   if (window.matchMedia('(max-width: 640px)').matches) {
-    openModalChat();
+    if (chatModal.getAttribute('aria-hidden') === 'true') {
+      openModalChat();
+    } else {
+      closeModalChat();
+    }
   } else {
     if (chatPanel.getAttribute('aria-hidden') === 'true') {
       openDockedChat();
@@ -122,6 +119,11 @@ chatExpand?.addEventListener('click', () => {
   openModalChat();
 });
 chatModalClose?.addEventListener('click', closeModalChat);
+chatModal?.addEventListener('click', (e) => {
+  if (e.target === chatModal) {
+    closeModalChat();
+  }
+});
 
 /* Keyboard Navigation
    - Global Escape key handling to close chat and mobile menu.
