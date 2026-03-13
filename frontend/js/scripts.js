@@ -41,6 +41,10 @@ function isMobileChatViewport() {
   return mobileChatViewport.matches;
 }
 
+function isChatModalOpen() {
+  return chatModal?.getAttribute('aria-hidden') === 'false';
+}
+
 function syncChatMessages(fromEl, toEl) {
   if (!fromEl || !toEl) return;
   // Copy the rendered messages so both views match
@@ -101,13 +105,14 @@ function closeModalChat() {
    - Wire up buttons to toggle between docked and full-screen chat.
 */
 chatToggle?.addEventListener('click', () => {
+  if (isChatModalOpen()) {
+    closeModalChat();
+    return;
+  }
+
   // On small screens, open modal; otherwise toggle docked panel
   if (isMobileChatViewport()) {
-    if (chatModal.getAttribute('aria-hidden') === 'true') {
-      openModalChat();
-    } else {
-      closeModalChat();
-    }
+    openModalChat();
   } else {
     if (chatPanel.getAttribute('aria-hidden') === 'true') {
       openDockedChat();
@@ -254,6 +259,12 @@ async function handleFormSubmit(e, inputEl, msgsEl) {
 function parallaxScroll() {
   const hero = document.querySelector('.hero-section');
   if (!hero) return;
+
+  if (isMobileChatViewport()) {
+    hero.style.backgroundPositionY = '';
+    return;
+  }
+
   const offset = window.pageYOffset || document.documentElement.scrollTop || 0;
   hero.style.backgroundPositionY = `${offset * 0.5}px`;
 }
