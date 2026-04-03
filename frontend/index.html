@@ -66,9 +66,9 @@
   <!-- Main page content -->
   <main id="main">
     <!-- Hero section with background image and overlay -->
-    <section class="hero-section bg-cover bg-center relative overflow-hidden">
+    <section class="hero-section bg-cover bg-center relative">
       <!-- Hero content container -->
-      <div class="mx-auto max-w-7xl px-4 py-10 relative z-10 hero-content">
+      <div class="mx-auto max-w-[1480px] px-4 py-10 relative z-10 hero-content">
         <!-- Hero title and subtitle -->
         <section class="mb-10 text-center">
           <h1 class="text-4xl font-bold tracking-tight bg-gradient-to-r from-sky-600 via-cyan-500 to-sky-600 bg-clip-text text-transparent pb-1">
@@ -79,20 +79,38 @@
           </p>
         </section>
 
-        <!-- Placeholder feature cards (three-column layout) -->
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="rounded-xl border border-white/60 bg-white/60 backdrop-blur p-6 shadow-sm text-center">
-            <h2 class="text-xl font-semibold text-slate-900 mb-2">Coming Soon</h2>
-            <p class="text-slate-700/80">Feature content will be displayed here.</p>
-          </div>
-          <div class="rounded-xl border border-white/60 bg-white/60 backdrop-blur p-6 shadow-sm text-center">
-            <h2 class="text-xl font-semibold text-slate-900 mb-2">Coming Soon</h2>
-            <p class="text-slate-700/80">Feature content will be displayed here.</p>
-          </div>
-          <div class="rounded-xl border border-white/60 bg-white/60 backdrop-blur p-6 shadow-sm text-center">
-            <h2 class="text-xl font-semibold text-slate-900 mb-2">Coming Soon</h2>
-            <p class="text-slate-700/80">Feature content will be displayed here.</p>
-          </div>
+        <!-- Homepage charts -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 xl:gap-8" aria-label="Homepage analytics">
+          <article class="chart-card chart-card-wide rounded-xl border border-white/60 bg-white/60 backdrop-blur p-6 shadow-sm lg:col-span-2" data-chart-card="years_reduced">
+            <header class="mb-4">
+              <h2 class="text-xl font-semibold text-slate-900 mb-2">Years Reduced by County</h2>
+              <p class="text-slate-700/80">A look at where the largest sentence reductions appear across tracked cases.</p>
+            </header>
+            <div class="chart-shell">
+              <p class="chart-status" data-chart-status>Loading chart...</p>
+              <canvas data-chart-canvas aria-label="Years Reduced by County chart" hidden></canvas>
+            </div>
+          </article>
+          <article class="chart-card rounded-xl border border-white/60 bg-white/60 backdrop-blur p-6 shadow-sm" data-chart-card="sentence_type">
+            <header class="mb-4">
+              <h2 class="text-xl font-semibold text-slate-900 mb-2">ISL vs DSL Distribution</h2>
+              <p class="text-slate-700/80">A snapshot of indeterminate and determinate sentence types in the current case set.</p>
+            </header>
+            <div class="chart-shell">
+              <p class="chart-status" data-chart-status>Loading chart...</p>
+              <canvas data-chart-canvas aria-label="ISL vs DSL Distribution chart" hidden></canvas>
+            </div>
+          </article>
+          <article class="chart-card rounded-xl border border-white/60 bg-white/60 backdrop-blur p-6 shadow-sm" data-chart-card="parole_eligibility">
+            <header class="mb-4">
+              <h2 class="text-xl font-semibold text-slate-900 mb-2">Parole Eligibility by Year</h2>
+              <p class="text-slate-700/80">When tracked cases become eligible for parole, grouped by year.</p>
+            </header>
+            <div class="chart-shell">
+              <p class="chart-status" data-chart-status>Loading chart...</p>
+              <canvas data-chart-canvas aria-label="Parole Eligibility by Year chart" hidden></canvas>
+            </div>
+          </article>
         </section>
       </div>
     </section>
