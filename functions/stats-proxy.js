@@ -15,7 +15,8 @@ const ALLOWED_DATASETS = new Set([
 ]);
 
 function isAllowedOrigin(origin) {
-  if (!origin) return false;
+  // Same-origin GET requests may omit Origin entirely.
+  if (!origin) return true;
 
   // Allow exact local dev origins
   if (LOCAL_ORIGINS.has(origin)) return true;
